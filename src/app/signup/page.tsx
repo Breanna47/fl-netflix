@@ -48,6 +48,8 @@ router.push("/");
                  });
 
                  handleLogin();
+                 
+                 router.push("/profiles");
             } catch (error) {
 console.log(error);
             }
@@ -82,8 +84,10 @@ console.log(error);
             Sign up</button>
         <p className="text-base text-[#ffffffb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
-            <FcGoogle className="cursor-pointer w-10 h-10" onClick={() => signIn("google")} />
-            <BsGithub className="cursor-pointer w-10 h-10" onClick={() =>signIn("github")}/>
+             <FcGoogle className="cursor-pointer w-10 h-10" 
+            onClick={() => signIn("google")}/>
+            <BsGithub className="cursor-pointer w-10 h-10" 
+            onClick={() =>signIn("github")}/>
         </div><div>
             <span className="text-[#ffffffb3] text-base font-normal">
                 Already have an account?</span>

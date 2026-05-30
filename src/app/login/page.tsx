@@ -21,6 +21,8 @@ const Login = () => {
       redirect: true,
       callbackUrl: "/",
     });
+
+    router.push("/profiles");
   } catch (error) {
     console.log(error);
   }
@@ -49,11 +51,13 @@ const Login = () => {
         <button className="cursor-pointer w-full bg-[#e50914] text-base font-medium rounded-lg py-2.5"
         onClick={handleLogin}
         >
-            Sign up</button>
+            Login</button>
         <p className="text-base text-[#ffffffb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
-            <FcGoogle className="cursor-pointer w-10 h-10" onClick={() => signIn("google")} />
-            <BsGithub className="cursor-pointer w-10 h-10" onClick={() =>signIn("github")} />
+            <FcGoogle className="cursor-pointer w-10 h-10" 
+            onClick={() => signIn("google")}/>
+            <BsGithub className="cursor-pointer w-10 h-10" 
+            onClick={() =>signIn("github")}/>
         </div><div>
             <span className="text-[#ffffffb3] text-base font-normal">
                 New to Netflix?</span>

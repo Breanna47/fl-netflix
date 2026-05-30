@@ -11,9 +11,10 @@ const token = await getToken({
     if(!token && pathname !== "/signup" && pathname !== "/login") {
         return NextResponse.redirect(new URL("/login", req.url));
     }
-        if(token && (pathname === "/login" || pathname === "/signup")) {
-            return NextResponse.redirect(new URL("/", req.url));
-        }
+      
+if (token && (pathname === "/login" || pathname === "/signup")) {
+  return NextResponse.redirect(new URL("/profiles", req.url));
+}        
     }
     export const config = {
         matcher: ["/", "/profiles", "/login", "/signup"],

@@ -6,12 +6,35 @@ import { useState } from "react";
 import { BsGithub } from "react-icons/bs";
 import { FcGoogle } from "react-icons/fc";
 import { toast } from "sonner";
-
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const SignUp = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const router = useRouter();
+
+    const handleLogin = async () => {
+        try {
+           const response = await signIn("credentials" , {
+            email,
+            password,
+            redirect: false,
+            callbackUrl: "/",
+           });
+        
+           if(!response?.ok) {
+            toast.error(response?.error);
+            return;
+           }
+
+
+router.push("/");
+        } catch (error) {
+            console.log(error);
+        }}
 
     const handleSignUp = async () => {
         if (!name || !email || !password) {
@@ -19,10 +42,12 @@ const SignUp = () => {
             return;
         }
         try {
-            await axios.post("/api/register", 
+            await axios.post("/api", 
                 { name, email, password,
 
                  });
+
+                 handleLogin();
             } catch (error) {
 console.log(error);
             }
@@ -57,8 +82,8 @@ console.log(error);
             Sign up</button>
         <p className="text-base text-[#ffffffb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
-            <FcGoogle className="cursor-pointer w-10 h-10" />
-            <BsGithub className="cursor-pointer w-10 h-10" />
+            <FcGoogle className="cursor-pointer w-10 h-10" onClick={() => signIn("google")} />
+            <BsGithub className="cursor-pointer w-10 h-10" onClick={() =>signIn("github")}/>
         </div><div>
             <span className="text-[#ffffffb3] text-base font-normal">
                 Already have an account?</span>

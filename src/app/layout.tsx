@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+// @ts-expect-error -- globals.css import is for side effects and type checking is not needed
 import "./globals.css";
 import { Toaster } from "sonner";
+import AuthProvider from "@/shared/components/AuthProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

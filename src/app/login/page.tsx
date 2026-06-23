@@ -12,21 +12,25 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const router = useRouter();
 
- const handleLogin = async () => {
+const handleLogin = async () => {
   try {
-    await signIn("credentials", {
+    const result = await signIn("credentials", {
       email,
       password,
-      redirect: true,
-      callbackUrl: "/",
+      redirect: false,
     });
-
+    
+    if (result?.error) {
+      console.error("Login error:", result.error);
+      alert(result.error);
+      return;
+    }
+    
     router.push("/profiles");
   } catch (error) {
-    console.log(error);
+    console.error("Sign in error:", error);
   }
 };
-
 
   return(
  <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center bg-black

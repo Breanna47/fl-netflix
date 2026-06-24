@@ -1,5 +1,7 @@
 import { Sparkle } from "lucide-react";
 import Image from "next/image";
+import DropdownMenu from "@/shared/ui/components/ui/DropdownMenu";
+import DropdownMenuTrigger from "@/shared/ui/components/ui/DropdownMenu";
 
 const Navbar = () => {
     return (
@@ -39,7 +41,20 @@ const Navbar = () => {
                 width={24} 
                 height={24}
                 alt="Notification"
-                 />     
+                 />
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                 <button className="text-white cursor-pointer">
+                    <Image 
+                    src="/assets/profile.png"
+                    height={32}
+                    width={32}
+                    alt="Profile"
+                    className="rounded-[4px]"
+                    />
+                </button>
+                </DropdownMenuTrigger>
+                 </DropdownMenu>
             </div>
         </div>
     );

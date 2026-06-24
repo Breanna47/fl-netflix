@@ -1,17 +1,23 @@
 "use client";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/dist/client/components/navigation";
 import Image from "next/image";
 
 const Profiles = () => {
 
 const {data: session} = useSession();
+const router = useRouter();
 
+const handleProfileClick = () => {
+    router.push("/");
+}
    return (
    <div className="flex w-full h-screen justify-center items-center flex-col gap-8">
     <h1 className="text-white text-[50.4px]"> Who&apos;s Watching? </h1>
    <div className="flex flex-col gap-3"> 
     <div className="border-[3.2px] border-[#e5e5e5] rounded-sm 
     overflow-hidden cursor-pointer"
+    onClick={handleProfileClick}
     > 
         <Image src="/assets/profile.png" 
         height={144} 

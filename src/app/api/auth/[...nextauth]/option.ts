@@ -56,7 +56,7 @@ export const authOptions: NextAuthConfig = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
+    async signIn({ user }) {
       try {
         await connectToDB();
         const existingUser = await User.findOne({ email: user.email });

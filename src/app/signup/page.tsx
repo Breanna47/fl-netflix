@@ -85,9 +85,9 @@ console.log(error);
         <p className="text-base text-[#ffffffb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
              <FcGoogle className="cursor-pointer w-10 h-10" 
-            onClick={() => signIn("google")}/>
+            onClick={() => signIn("google", { callbackUrl: "/profiles" })}/>
             <BsGithub className="cursor-pointer w-10 h-10" 
-            onClick={() =>signIn("github")}/>
+            onClick={() =>signIn("github", { callbackUrl: "/profiles" })}/>
         </div><div>
             <span className="text-[#ffffffb3] text-base font-normal">
                 Already have an account?</span>

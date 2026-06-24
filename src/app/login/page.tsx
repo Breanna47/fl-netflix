@@ -37,7 +37,7 @@ const handleLogin = async () => {
     loginContainer">
         <div className="max-w-[480px] w-full bg-[#000000b3] rounded-sm py-12 px-16 font-bold text-[2rem]
         text-white flex flex-col gap-5 z-50">
-        <h1>Sign Up</h1>
+        <h1>Login</h1>
       
         <Input type="email" 
         placeholder="Email" 
@@ -58,9 +58,9 @@ const handleLogin = async () => {
         <p className="text-base text-[#ffffffb3] text-center">OR</p>
         <div className="flex items-center justify-center gap-4">
             <FcGoogle className="cursor-pointer w-10 h-10" 
-            onClick={() => signIn("google")}/>
+            onClick={() => signIn("google", { callbackUrl: "/profiles" })}/>
             <BsGithub className="cursor-pointer w-10 h-10" 
-            onClick={() =>signIn("github")}/>
+            onClick={() => signIn("github", { callbackUrl: "/profiles" })}/>
         </div><div>
             <span className="text-[#ffffffb3] text-base font-normal">
                 New to Netflix?</span>

@@ -1,9 +1,19 @@
+"use client";
 import { Sparkle } from "lucide-react";
 import Image from "next/image";
-import DropdownMenu from "@/shared/ui/components/ui/DropdownMenu";
-import DropdownMenuTrigger from "@/shared/ui/components/ui/DropdownMenu";
+import { DropdownMenu, 
+    DropdownMenuContent, 
+    DropdownMenuGroup, 
+    DropdownMenuItem, 
+    DropdownMenuSeparator, 
+    DropdownMenuTrigger,
+ } from "@/shared/ui/components/ui/DropdownMenu";
+import { signOut, useSession } from "next-auth/react";
 
 const Navbar = () => {
+
+const {data: session} = useSession();
+
     return (
         <div className="fixed top-0 w-full flex justify-between px-12 py-4
         bg-transparent transition-colors duration-1000">
@@ -54,6 +64,32 @@ const Navbar = () => {
                     />
                 </button>
                 </DropdownMenuTrigger>
+                <DropdownMenuContent 
+                className="bg-[#000000e6] 
+                text-white 
+                border-none w-[200px]">   
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem>
+                              <Image 
+                    src="/assets/profile.png"
+                    height={32}
+                    width={32}
+                    alt="Profile"
+                    className="rounded-[4px]"
+                    />
+                    <span>{session?.user?.name}</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator className="bg-[#ffffff40]" />
+                    <DropdownMenuGroup>
+                        <DropdownMenuItem className="text-[13px] px-2.5 py-2 flex 
+                        justify-between"
+                        onClick={() => signOut()}
+                        >
+                            Sign Out of Netflix
+                        </DropdownMenuItem>
+                    </DropdownMenuGroup>
+                </DropdownMenuContent>
                  </DropdownMenu>
             </div>
         </div>

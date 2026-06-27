@@ -7,6 +7,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import GithubProvider from "next-auth/providers/github";
 
+
 export const authOptions: NextAuthConfig = {
   providers: [
     CredentialsProvider({

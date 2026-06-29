@@ -40,7 +40,7 @@ const Billboard = () => {
 
     return (
     <div className="h-screen relative">
-        <video 
+        <video
         src ={randomMovie?.videoUrl} 
         poster={randomMovie?.thumbnailUrl} 
         ref={videoRef}
@@ -78,7 +78,13 @@ const Billboard = () => {
                 </button>
             </div>
             </div>
-            {showInfoModal ? <MovieInfoModal /> : null}
+            {showInfoModal ? (
+                <MovieInfoModal
+                 showInfoModal={showInfoModal} 
+                 setShowInfoModal={setShowInfoModal} 
+            movieData={randomMovie}
+            /> 
+            ): null}
         </div>
         );
     };

@@ -1,5 +1,4 @@
 
-
 const movies = [
   {
     title: "Big Buck Bunny",

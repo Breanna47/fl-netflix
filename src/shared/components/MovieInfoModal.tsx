@@ -3,6 +3,7 @@ import { Dialog, DialogContent } from "../ui/components/ui/Dialog"
 import { IMovie } from "@/types/movie.types";
 import Image from "next/image";
 import { Dot } from "lucide-react";
+import { DialogTitle } from "../ui/components/ui/Dialog";
 
 interface IMovieInfoModalProps {
     showInfoModal: boolean;
@@ -24,7 +25,7 @@ const MovieInfoModal = ({
         }
     };
 
-    
+
   return (  
   <Dialog open={showInfoModal} onOpenChange={() =>setShowInfoModal(false)}>
     <DialogTitle></DialogTitle>
@@ -47,8 +48,8 @@ const MovieInfoModal = ({
                     </h1>
                     <div className="flex self-start gap-3">
                      <button className="flex gap-2 bg-white 
-                     p-2 px-3.5 rounded-sm self-start cursor-pointer font-bold">
-                        onClick={handlePlayButtonClick}
+                     p-2 px-3.5 rounded-sm self-start cursor-pointer font-bold"
+                        onClick={handlePlayButtonClick}>
                         <Image src="/assets/play.svg" 
                         width={20}
                         height={20}

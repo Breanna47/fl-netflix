@@ -18,6 +18,7 @@ const Billboard = () => {
             const { data } = await axios.get("/api/movies");
             const randomNum = Math.floor(Math.random() * data.length);
             setRandomMovie(data[randomNum]);
+
         } catch (error) {
             console.log(error);
         }
@@ -25,7 +26,9 @@ const Billboard = () => {
 
     const handlePlayButtonClick = () => {
         if (videoRef.current) {
+            videoRef.current.play();
             videoRef.current.requestFullscreen();
+
         }
     };
 
@@ -36,6 +39,7 @@ const Billboard = () => {
     useEffect(() => {
         fetchMovies();
     }, []);
+
 
 
     return (

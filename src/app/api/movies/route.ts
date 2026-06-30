@@ -5,7 +5,7 @@ import serverAuth from "@/lib/serverAuth";
 
 export async function GET() {
     try {
-        await serverAuth();
+     await serverAuth();
 
         await connectToDB();
 

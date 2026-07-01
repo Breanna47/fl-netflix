@@ -1,6 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/option";
 import { getServerSession } from "next-auth";
-import User from "@/models/User";
+import User from "@/models/user";
 import { connectToDB } from "@/lib/db";
 
 

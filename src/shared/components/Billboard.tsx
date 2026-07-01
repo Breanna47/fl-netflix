@@ -44,16 +44,18 @@ const Billboard = () => {
 
     return (
     <div className="h-screen relative">
-        <video
-        src ={randomMovie?.videoUrl} 
-        poster={randomMovie?.thumbnailUrl} 
-        ref={videoRef}
-        className="w-full h-full object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
-        />
+      <video
+  key={randomMovie?._id}
+  src={randomMovie?.videoUrl}
+  poster={randomMovie?.thumbnailUrl}
+  ref={videoRef}
+  className="w-full h-full object-cover"
+  autoPlay
+  loop
+  muted
+  playsInline
+  controls
+/>
         <div className="absolute top-1/2 left-10 -translate-y-1/2 
         transform flex flex-col gap-4">
 

@@ -1,22 +1,21 @@
 import { connectToDB } from "@/lib/db";
 import Movie from "@/models/Movies.";
 import { NextResponse } from "next/server";
-import serverAuth from "@/lib/serverAuth";
 
 export async function GET() {
-    try {
-     await serverAuth();
+  try {
+    await connectToDB();
 
-        await connectToDB();
+    const movies = await Movie.find({});
+    console.log("Movies found:", movies.length);
 
-        const movies = await Movie.find({});
-        
-        return NextResponse.json(movies, { status: 200 });
-    } catch (error) {
-        console.log(error);
-        return NextResponse.json(
-            { message: "Failed to fetch movies" },
-            { status: 500 }
-        );
-    }
+    return NextResponse.json(movies, { status: 200 });
+  } catch (error) {
+    console.log("Movies API error:", error);
+
+    return NextResponse.json(
+      { message: "Failed to fetch movies" },
+      { status: 500 }
+    );
+  }
 }

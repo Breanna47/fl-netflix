@@ -10,7 +10,7 @@ const Movies = ({ movies, label }: { movies: IMovie[]; label: string }) => {
     <div className="flex gap-2"> 
         {movies.map((movie) => (
         <div key={movie._id}>
-            <div className="relative cursor-pointer">
+            <div className="relative cursor-pointer w-[250px] h-[140px]">
                 <Image src={movie.thumbnailUrl} 
                 className="object-cover" 
                 alt={movie.title}

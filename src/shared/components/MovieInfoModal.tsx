@@ -4,6 +4,9 @@ import { IMovie } from "@/types/movie.types";
 import Image from "next/image";
 import { Dot } from "lucide-react";
 import { DialogTitle } from "../ui/components/ui/Dialog";
+import useUser from "@/stores/user.store";
+import { useMemo } from "react";
+import axios from "axios";
 
 interface IMovieInfoModalProps {
     showInfoModal: boolean;
@@ -18,6 +21,11 @@ const MovieInfoModal = ({
     movieData 
 }: IMovieInfoModalProps) => {
     const videoRef = useRef<HTMLVideoElement | null>(null);
+    const {updateUser, updateFavorites, user} = useUser();
+
+    const isFavorite = useMemo(() => {
+        return user?.favorites.includes(movieData?._id || "");
+    }, [user, movieData]);
 
     const handlePlayButtonClick = () => {
         if (videoRef.current) {
@@ -25,6 +33,20 @@ const MovieInfoModal = ({
         }
     };
 
+const toggleFavorite = async () => {
+    try {
+        if(isFavorite) {
+            await axios.delete("/api/favorite", 
+                { data: { movieId: movieData?._id } });
+        } else {
+            await axios.post("/api/favorite", { movieId: movieData?._id });
+        }
+    } catch (error) {
+        console.log(error);
+        updateUser();
+        updateFavorites();
+    }
+    };
 
   return (  
   <Dialog open={showInfoModal} onOpenChange={() =>setShowInfoModal(false)}>
@@ -58,8 +80,9 @@ const MovieInfoModal = ({
                         Play
                         </button>   
                          <button className="bg-transparent border-2 rounded-full p-2 border-white cursor-pointer"
+                         onClick={toggleFavorite}
                          >
-                        <Image src="/assets/plus.svg" 
+                        <Image src={`/assets/${isFavorite ? "white-tick" : "plus"}`} 
                         width={20}
                         height={20}
                         alt="Add"

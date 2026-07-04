@@ -2,9 +2,9 @@
 
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
-
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+// Avoid importing Button to prevent module resolution error in some environments.
+// Use native button element for the close control instead.
 import { XIcon } from "lucide-react"
 
 function Dialog({

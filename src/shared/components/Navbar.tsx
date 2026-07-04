@@ -11,11 +11,14 @@ import { DropdownMenu,
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
+import NetflixGPTModal from "./NetflixGPTModal";
 
 const Navbar = () => {
 
 const {data: session} = useSession();
 const  [isScrolled, setIsScrolled] = useState(false);
+const [isNetflixGPTModalOpen, setIsNetflixGPTModalOpen] = useState(false);
+
 
 useEffect(() =>{
     const handleScroll = () => {
@@ -24,12 +27,23 @@ useEffect(() =>{
 
     window.addEventListener("scroll", handleScroll)
 
-    return () => {
+    return
+    
+    () => {
         window.removeEventListener('scroll', handleScroll)
     }
 }, [])
 
     return (
+        <>
+        <div>
+        </div>
+        {isNetflixGPTModalOpen ? (
+            <NetflixGPTModal 
+            isNetflixGPTModalOpen={isNetflixGPTModalOpen}
+            setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen}
+            />
+        ) : null}
         <div className={cn(
         `fixed top-0 w-full flex justify-between px-12 py-4
         bg-transparent transition-colors duration-1000 z-50`, isScrolled ? "bg-black" : ""
@@ -52,7 +66,7 @@ useEffect(() =>{
                     </li>
                 </ul>
             </div>
-            <div className="flex gap-[15px] items-center">
+            <div className="flex gap-[15px] items-center" onClick={() => setIsNetflixGPTModalOpen(true)}>
                 <button className="cursor-pointer">
                  <Sparkle className="text-white" size={20} />   
                  </button>
@@ -111,6 +125,10 @@ useEffect(() =>{
                  </DropdownMenu>
             </div>
         </div>
+        {isNetflixGPTModalOpen ? 
+        <NetflixGPTModal isNetflixGPTModalOpen={isNetflixGPTModalOpen} 
+        /> : null}
+        </>
     );
 };
 

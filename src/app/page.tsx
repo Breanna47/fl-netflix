@@ -8,6 +8,7 @@ import { IMovie } from "@/types/movie.types";
 import Movies from "@/shared/components/Movies";
 import useUser from "@/stores/user.store";
 import MovieList from "@/shared/components/MovieList";
+import FavoriteList from "@/shared/components/FavoriteList";
 
 export default function Home() {
 
@@ -58,6 +59,7 @@ useEffect(() => {
       <Billboard randomMovie={randomMovie} video={video} />
       <Movies movies={movieList} label="Top Movies" />
       <MovieList />
+      <FavoriteList/>
     </div>
   );
 }

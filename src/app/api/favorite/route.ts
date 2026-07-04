@@ -1,8 +1,9 @@
 import serverAuth from "@/lib/serverAuth";
 import { NextRequest, NextResponse } from "next/server";
 import { connectToDB } from "@/lib/db";
-import Movie from "@/models/movie";
+import Movie from "@/models/Movies.";
 import User from "@/models/user";
+
 
 
 export async function POST(req: NextRequest) {

@@ -1,9 +1,11 @@
 "use client";
 import { IMovie } from "@/types/movie.types";
-import Image from "next/image";
 import { useState } from "react";
 import MoviePopup from "./MoviePopup";
 import MovieInfoModal from "./MovieInfoModal";
+
+
+
 
 
 const Movies = ({ movies, label }: { movies: IMovie[]; label: string }) => {
@@ -45,7 +47,6 @@ return (
         > 
             <div className="relative cursor-pointer w-[250px] h-[140px] 
             rounded-sm transition duration-300 ease in-out">
-              <Image />
               <img
                 src={`https://image.tmdb.org/t/p/w500${movie?.backdrop_path}`}
                 className="object-cover"

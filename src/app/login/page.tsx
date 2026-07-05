@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react";
-import { Input } from "@/shared/ui/Input";
+import { Input } from "@/shared/ui/components/Input";
 import { FcGoogle } from "react-icons/fc";
 import { BsGithub } from "react-icons/bs";
 import Link from "next/link";

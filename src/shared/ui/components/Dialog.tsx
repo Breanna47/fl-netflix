@@ -3,8 +3,7 @@
 import * as React from "react"
 import { Dialog as DialogPrimitive } from "radix-ui"
 import { cn } from "@/lib/utils"
-// Avoid importing Button to prevent module resolution error in some environments.
-// Use native button element for the close control instead.
+// Using native button to avoid missing/Button import
 import { XIcon } from "lucide-react"
 
 function Dialog({
@@ -68,20 +67,15 @@ function DialogContent({
       >
         {children}
         {showCloseButton && (
-          <DialogPrimitive.Close 
-          data-slot="dialog-close" asChild
-          className="bg-[#181818] rounded-full w-9 h-9 p-1.5 text-white cursor-pointer absolute top-2 right-2 opacity-70 
-          hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 
-          disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-accent-foreground">
-            <Button
-              variant="ghost"
-              className="absolute top-2 right-2"
-              size="icon-sm"
+          <DialogPrimitive.Close data-slot="dialog-close" asChild>
+            <button
+              type="button"
+              aria-label="Close"
+              className="bg-[#181818] rounded-full w-9 h-9 p-1.5 text-white cursor-pointer absolute top-2 right-2 opacity-70 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-accent-foreground"
             >
-              <XIcon className="w-full! h-full!"
-              />
+              <XIcon className="w-full h-full" />
               <span className="sr-only">Close</span>
-            </Button>
+            </button>
           </DialogPrimitive.Close>
         )}
       </DialogPrimitive.Content>
@@ -119,7 +113,12 @@ function DialogFooter({
       {children}
       {showCloseButton && (
         <DialogPrimitive.Close asChild>
-          <Button variant="outline">Close</Button>
+          <button
+            type="button"
+            className="inline-flex items-center justify-center rounded-md border px-3 py-1 text-sm"
+          >
+            Close
+          </button>
         </DialogPrimitive.Close>
       )}
     </div>

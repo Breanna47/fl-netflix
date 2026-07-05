@@ -1,9 +1,9 @@
 import { useRef } from "react";
-import { Dialog, DialogContent } from "../ui/components/ui/Dialog"
+import { Dialog, DialogContent } from "../ui/components/Dialog"
 import { IMovie } from "@/types/movie.types";
 import Image from "next/image";
 import { Dot } from "lucide-react";
-import { DialogTitle } from "../ui/components/ui/Dialog";
+import { DialogTitle } from "../ui/components/Dialog";
 import useUser from "@/stores/user.store";
 import { useMemo } from "react";
 import axios from "axios";

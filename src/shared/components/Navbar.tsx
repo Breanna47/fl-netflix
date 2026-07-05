@@ -7,7 +7,7 @@ import { DropdownMenu,
     DropdownMenuItem, 
     DropdownMenuSeparator, 
     DropdownMenuTrigger,
- } from "@/shared/ui/components/ui/DropdownMenu";
+ } from "@/shared/ui/components/DropdownMenu";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -20,19 +20,17 @@ const  [isScrolled, setIsScrolled] = useState(false);
 const [isNetflixGPTModalOpen, setIsNetflixGPTModalOpen] = useState(false);
 
 
-useEffect(() =>{
+useEffect(() => {
     const handleScroll = () => {
-            setIsScrolled(window.scrollY > 0);
+        setIsScrolled(window.scrollY > 0);
     };
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", handleScroll);
 
-    return
-    
-    () => {
-        window.removeEventListener('scroll', handleScroll)
-    }
-}, [])
+    return () => {
+        window.removeEventListener("scroll", handleScroll);
+    };
+}, []);
 
     return (
         <>
@@ -127,7 +125,7 @@ useEffect(() =>{
         </div>
         {isNetflixGPTModalOpen ? 
         <NetflixGPTModal isNetflixGPTModalOpen={isNetflixGPTModalOpen} 
-        /> : null}
+        setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen} /> : null}
         </>
     );
 };

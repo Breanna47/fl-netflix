@@ -3,6 +3,9 @@ import serverAuth from "@/lib/serverAuth";
 import { connectToDB } from "@/lib/db";
 import Movie from "@/models/movie";
 import User from "@/models/user";
+// https://api.themoviedb.org/3/movie/popular?api_key=8e8c7cc753f2303eefb719f72f56b12b
+
+
 
 export async function GET() {
 

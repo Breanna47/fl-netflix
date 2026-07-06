@@ -46,6 +46,7 @@ const toggleFavorites = async (movieId: string) => {
       console.log("fullscreenElement", document.fullscreenElement);
       if (!document.fullscreenElement) {
         setIsVideoPlaying(false);
+        videoRef.current?.pause();
         videoRef.current = null;
       }
     };
@@ -60,7 +61,7 @@ const toggleFavorites = async (movieId: string) => {
     <div
       className="absolute -left-8 w-80 z-10 -top-15 rounded-md text-base
     transform scale-75 hover:scale-100 hover:-translate-y-6 transition-transform
-    duration-300 ease-in-out"
+    duration-300 ease-in-out popupShadow"
     >
       <video
         ref={videoRef}

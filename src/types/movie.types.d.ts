@@ -11,4 +11,9 @@ interface IMovie {
     mood: string;
 }
 
-export { IMovie };
+interface IRecommendedMovie {
+    recommendation: IMovie[];
+    reason: string;
+}
+
+export { IRecommendedMovie, type IMovie };

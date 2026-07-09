@@ -1,140 +1,175 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
 import { IMovie } from "@/types/movie.types";
 import Image from "next/image";
-import clsx from "clsx";
 import useUser from "@/stores/user.store";
 import axios from "axios";
 
+interface MoviePopupProps {
+  movie: IMovie;
+  handleOpenInfoModal: () => void;
+}
 
 const MoviePopup = ({
   movie,
   handleOpenInfoModal,
-}: {
-  movie: IMovie;
-  handleOpenInfoModal: () => void;
-}) => {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const {user} = useUser()
+}: MoviePopupProps) => {
+const {
+  user,
+  updateUser,
+  updateFavorites,
+} = useUser();
 
   const isFavorite = useMemo(() => {
-    return user?.favorites.includes(movie._id);
-  }, [user, movie]);
+    return user?.favorites.includes(movie._id) ?? false;
+  }, [user, movie._id]);
 
-  const handlePlayButtonClick = () => {
-    if (videoRef.current) {
-      setIsVideoPlaying(true);
-      videoRef.current.play(); 
-      videoRef.current.requestFullscreen();
-    }
-  };
-
-const toggleFavorites = async (movieId: string) => {
+  const toggleFavorites = async () => {
   try {
     if (isFavorite) {
-      await axios.delete("/api/favorite", { data: { movieId } });
+      await axios.delete("/api/favorite", {
+        data: {
+          movieId: movie._id,
+        },
+      });
     } else {
-      await axios.post("/api/favorite", { movieId });
+      await axios.post("/api/favorite", {
+        movieId: movie._id,
+      });
     }
+
+    // Refresh Zustand from the server
+    await updateUser();
+    await updateFavorites();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      console.log("fullscreenElement", document.fullscreenElement);
-      if (!document.fullscreenElement) {
-        setIsVideoPlaying(false);
-        videoRef.current?.pause();
-        videoRef.current = null;
-      }
-    };
-    document.addEventListener("fullscreenchange", handleFullscreenChange);
-
-    return () => {
-      document.removeEventListener("fullscreenchange", handleFullscreenChange);
-    };
-  }, []);
-
   return (
     <div
-      className="absolute -left-8 w-80 z-10 -top-15 rounded-md text-base
-    transform scale-75 hover:scale-100 hover:-translate-y-6 transition-transform
-    duration-300 ease-in-out popupShadow"
+      className="
+        absolute
+        -left-8
+        -top-15
+        z-10
+        w-80
+        overflow-hidden
+        rounded-md
+        bg-[#181818]
+        popupShadow
+        transform
+        scale-75
+        hover:scale-100
+        hover:-translate-y-6
+        transition-transform
+        duration-300
+      "
     >
-      <video
-        ref={videoRef}
-        src={movie.videoUrl}
-        poster={movie.thumbnailUrl}
-        className={clsx({ hidden: !isVideoPlaying })}
-      />
-      <div className="relative w-80 h-[140px]">
+      {/* Movie Backdrop */}
+      <div className="relative w-full h-[180px]">
         <Image
-          className="object-cover"
           src={movie.thumbnailUrl}
           alt={movie.title}
           fill
+          className="object-cover"
         />
       </div>
-      <div className="bg-[#181818] p-4">
-        <div className="flex justfy-between mb-2 items-center">
-          <div className="flex gap-2 items-center">
+
+      {/* Future Trailer Support
+          Fetch:
+          /movie/${movie.id}/videos
+
+          Then embed:
+          https://www.youtube.com/embed/${trailerKey}
+      */}
+
+      <div className="p-4">
+        <div className="flex justify-between items-center mb-4">
+          <div className="flex gap-2">
             <button
-              className="bg-white border-2 rounded-full
-                p-2 border-[#ffffff80] cursor-pointer"
-              onClick={handlePlayButtonClick}
+              className="
+                bg-white
+                rounded-full
+                p-2
+                cursor-pointer
+                transition hover:scale-110
+              "
             >
-              <Image src="/assets/play.svg" width={20} height={20} alt="Play" />
+              <Image
+                src="/assets/play.svg"
+                width={20}
+                height={20}
+                alt="Play"
+              />
             </button>
+
             <button
-              className="bg-[#2a2a2a99] border-2 rounded-full
-                p-2 border-[#ffffff80] cursor-pointer"
-              onClick={() => toggleFavorites(movie._id)}
+              onClick={toggleFavorites}
+              className="
+                bg-[#2a2a2a99]
+                border-2
+                border-[#ffffff80]
+                rounded-full
+                p-2
+                hover:bg-[#ffffff1a]
+                transition hover:scale-110
+              "
             >
-              <Image src={`/assets/${isFavorite ? "white-tick" : "plus"}.svg`}
-               width={20}
-                height={20} 
-                alt="Add" 
-                />
+              <Image
+                src={`/assets/${
+                  isFavorite ? "white-tick" : "plus"
+                }.svg`}
+                width={20}
+                height={20}
+                alt="Favorite"
+              />
             </button>
           </div>
+
           <button
-            className="cursor-pointer bg-[#2a2a2a99] border-2 border-[#ffffff80]
-                p-2 rounded-full hover:bg-[#ffffff1a] hover:border-white"
             onClick={handleOpenInfoModal}
+            className="
+              bg-[#2a2a2a99]
+              border-2
+              border-[#ffffff80]
+              rounded-full
+              p-2
+            "
           >
             <Image
               src="/assets/down-arrow.svg"
               width={24}
               height={24}
-              alt="Show movie details"
+              alt="More Info"
             />
           </button>
         </div>
-        <div className="flex gap-2 items-center mt-4">
-          <span
-            className="px-2 uppercase whitespace-nowrap text-[#bcbcbc]
-                    text-sm font-medium border border-[#fff6]"
-          >
-            U/A 13+
+
+        <h3 className="text-white font-bold text-lg">
+          {movie.title}
+        </h3>
+
+        <div className="flex items-center gap-3 mt-2 text-sm text-gray-300">
+          <span className="text-green-400 font-semibold">
+            ⭐{" "}
+            {typeof movie.rating === "number"
+              ? movie.rating.toFixed(1)
+              : "N/A"}
           </span>
-          <span className="text-[#bcbcbc] text-base">{movie.duration}</span>
-          <span
-            className="text-[#bcbcbc] border border-[#fff6] rounded-[3px]
-                        text-xs px-1.5"
-          >
+
+          <span>{movie.duration}</span>
+
+          <span className="border border-gray-500 px-1 rounded">
             HD
           </span>
         </div>
-        <p
-          className="textShadow text-base 
-             text-white mt-3"
-        >
-          {movie.genre}
+
+        <p className="text-gray-300 text-sm mt-3 line-clamp-3">
+          {movie.description}
         </p>
       </div>
     </div>
   );
 };
+
 export default MoviePopup;

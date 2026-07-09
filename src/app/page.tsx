@@ -1,65 +1,93 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import Navbar from "@/shared/components/Navbar";
 import Billboard from "@/shared/components/Billboard";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { IMovie } from "@/types/movie.types";
 import Movies from "@/shared/components/Movies";
-import useUser from "@/stores/user.store";
 import MovieList from "@/shared/components/MovieList";
 import FavoriteList from "@/shared/components/FavoriteList";
+import { mapTMDBMovie } from "@/lib/tmdb";
+import { IMovie } from "@/types/movie.types";
+import useUser from "@/stores/user.store";
+
+interface TMDBVideo {
+  key: string;
+  site: string;
+  type: string;
+}
 
 export default function Home() {
-
-const { updateUser } = useUser();
-
-useEffect(() => {
-  updateUser();
-}, [updateUser]);
+  const { updateUser } = useUser();
 
   const [randomMovie, setRandomMovie] = useState<IMovie | null>(null);
-  const [video, setVideo] = useState<string | null>(null);
   const [movieList, setMovieList] = useState<IMovie[]>([]);
+  const [video, setVideo] = useState<TMDBVideo | null>(null);
+
+  useEffect(() => {
+    updateUser();
+  }, [updateUser]);
 
   useEffect(() => {
     const fetchMovies = async () => {
       try {
         const { data } = await axios.get(
-          "https://api.themoviedb.org/3/movie/popular?api_key=8e8c7cc753f2303eefb719f72f56b12b",
+          `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`
         );
-        const randomNum = Math.floor(Math.random() * data.results.length);
-        setMovieList(data.results);
-        setRandomMovie(data.results[randomNum]);
-        if (
-          data.results[randomNum] === undefined ||
-          data.results[randomNum] === null
-        )
-          return;
 
-        console.log("this ran");
-        getRandomMovieVideoURL(data.results[randomNum].id);
+const mappedMovies = data.results.map(mapTMDBMovie);
+
+        if (!mappedMovies.length) return;
+
+        setMovieList(mappedMovies);
+
+        const random =
+          mappedMovies[
+            Math.floor(Math.random() * mappedMovies.length)
+          ];
+
+        setRandomMovie(random);
+
+        const response = await axios.get(
+          `https://api.themoviedb.org/3/movie/${random.id}/videos?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY}`
+        );
+
+        const trailer =
+          response.data.results.find(
+            (video: TMDBVideo) =>
+              video.site === "YouTube" &&
+              video.type === "Trailer"
+          ) ??
+          response.data.results[0] ??
+          null;
+
+        setVideo(trailer);
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     };
-    async function getRandomMovieVideoURL(movieId: number) {
-      const response = await axios.get(
-        `https://api.themoviedb.org/3/movie/${movieId}/videos?api_key=8e8c7cc753f2303eefb719f72f56b12b`,
-      );
-      const movieVideo = response.data.results[0];
-      setVideo(movieVideo);
-    }
 
     fetchMovies();
   }, []);
+
   return (
     <div>
       <Navbar />
-      <Billboard randomMovie={randomMovie} video={video} />
-      <Movies movies={movieList} label="Top Movies" />
+
+      <Billboard
+        randomMovie={randomMovie}
+        video={video}
+      />
+
+      <Movies
+        movies={movieList}
+        label="Top Movies"
+      />
+
       <MovieList />
-      <FavoriteList/>
+
+      <FavoriteList />
     </div>
   );
 }

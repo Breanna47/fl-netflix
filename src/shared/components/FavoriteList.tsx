@@ -9,6 +9,10 @@ const FavoriteList = () => {
         updateFavorites();
     }, [updateFavorites]);
 
+  console.log("Favorites:", favorites);
+
+
+
     return (
     <div className="pb-16">
         <Movies movies={favorites} label="My List" />

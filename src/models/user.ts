@@ -6,8 +6,10 @@ const userSchema = new Schema(
         email: { type: String, required: true, unique: true },
         password: { type: String },
         image: { type: String },
-        favorites: [{ type: Schema.Types.ObjectId, ref: "Movie" }],
-    },
+favorites: {
+  type: [String],
+  default: [],
+},    },
     { timestamps: true }
 );
 userSchema.pre("save", async function () {

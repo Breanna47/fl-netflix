@@ -13,19 +13,19 @@ export async function POST(req: NextRequest) {
 
     await User.updateOne(
       { email: currentUser.email },
-      { $addToSet: { favorites: movieId } }
+      { $addToSet: { favorites: movieId } },
     );
 
     return NextResponse.json(
       { message: "Movie added to favorites" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.log(error);
 
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -40,19 +40,19 @@ export async function DELETE(req: NextRequest) {
 
     await User.updateOne(
       { email: currentUser.email },
-      { $pull: { favorites: movieId } }
+      { $pull: { favorites: movieId } },
     );
 
     return NextResponse.json(
       { message: "Movie removed from favorites" },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.log(error);
 
     return NextResponse.json(
       { message: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

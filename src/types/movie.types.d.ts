@@ -7,7 +7,7 @@ export interface IMovie {
 
   thumbnailUrl: string;
 
-  videoUrl?: string;
+  videoUrl: string;
 
   trailerKey?: string;
 

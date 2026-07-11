@@ -3,21 +3,19 @@ import { useEffect } from "react";
 import Movies from "./Movies";
 
 const FavoriteList = () => {
-    const {favorites, updateFavorites} = useUser()
-    
-    useEffect(() => {
-        updateFavorites();
-    }, [updateFavorites]);
+  const { favorites, updateFavorites } = useUser();
+
+  useEffect(() => {
+    updateFavorites();
+  }, [updateFavorites]);
 
   console.log("Favorites:", favorites);
 
-
-
-    return (
+  return (
     <div className="pb-16">
-        <Movies movies={favorites} label="My List" />
+      <Movies movies={favorites} label="My List" />
     </div>
-    );
+  );
 };
 
 export default FavoriteList;

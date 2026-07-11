@@ -9,41 +9,34 @@ interface MoviePopupProps {
   handleOpenInfoModal: () => void;
 }
 
-const MoviePopup = ({
-  movie,
-  handleOpenInfoModal,
-}: MoviePopupProps) => {
-const {
-  user,
-  updateUser,
-  updateFavorites,
-} = useUser();
+const MoviePopup = ({ movie, handleOpenInfoModal }: MoviePopupProps) => {
+  const { user, updateUser, updateFavorites } = useUser();
 
   const isFavorite = useMemo(() => {
     return user?.favorites.includes(movie._id) ?? false;
   }, [user, movie._id]);
 
   const toggleFavorites = async () => {
-  try {
-    if (isFavorite) {
-      await axios.delete("/api/favorite", {
-        data: {
+    try {
+      if (isFavorite) {
+        await axios.delete("/api/favorite", {
+          data: {
+            movieId: movie._id,
+          },
+        });
+      } else {
+        await axios.post("/api/favorite", {
           movieId: movie._id,
-        },
-      });
-    } else {
-      await axios.post("/api/favorite", {
-        movieId: movie._id,
-      });
-    }
+        });
+      }
 
-    // Refresh Zustand from the server
-    await updateUser();
-    await updateFavorites();
-  } catch (error) {
-    console.error(error);
-  }
-};
+      // Refresh Zustand from the server
+      await updateUser();
+      await updateFavorites();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div
@@ -87,20 +80,10 @@ const {
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-2">
             <button
-              className="
-                bg-white
-                rounded-full
-                p-2
-                cursor-pointer
-                transition hover:scale-110
-              "
+              onClick={handleOpenInfoModal}
+              className="bg-white rounded-full p-2 cursor-pointer"
             >
-              <Image
-                src="/assets/play.svg"
-                width={20}
-                height={20}
-                alt="Play"
-              />
+              <Image src="/assets/play.svg" width={20} height={20} alt="Play" />
             </button>
 
             <button
@@ -116,9 +99,7 @@ const {
               "
             >
               <Image
-                src={`/assets/${
-                  isFavorite ? "white-tick" : "plus"
-                }.svg`}
+                src={`/assets/${isFavorite ? "white-tick" : "plus"}.svg`}
                 width={20}
                 height={20}
                 alt="Favorite"
@@ -145,23 +126,17 @@ const {
           </button>
         </div>
 
-        <h3 className="text-white font-bold text-lg">
-          {movie.title}
-        </h3>
+        <h3 className="text-white font-bold text-lg">{movie.title}</h3>
 
         <div className="flex items-center gap-3 mt-2 text-sm text-gray-300">
           <span className="text-green-400 font-semibold">
             ⭐{" "}
-            {typeof movie.rating === "number"
-              ? movie.rating.toFixed(1)
-              : "N/A"}
+            {typeof movie.rating === "number" ? movie.rating.toFixed(1) : "N/A"}
           </span>
 
           <span>{movie.duration}</span>
 
-          <span className="border border-gray-500 px-1 rounded">
-            HD
-          </span>
+          <span className="border border-gray-500 px-1 rounded">HD</span>
         </div>
 
         <p className="text-gray-300 text-sm mt-3 line-clamp-3">

@@ -1,28 +1,31 @@
-"use client"
+"use client";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { IMovie } from "@/types/movie.types";
 import Movies from "./Movies";
 
-
 const MovieList = () => {
-const [movies, setMovies] = useState<IMovie[]>([]);
+  const [movies, setMovies] = useState<IMovie[]>([]);
 
-    const fetchMovies = async () => {
-        try {
-const { data } = await axios.get("api/movies");
-setMovies(data);
-        }catch (error) {
-            console.log(error);
-        }
-    };
+  const fetchMovies = async () => {
+    try {
+      const { data } = await axios.get("api/movies");
+      setMovies(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
-    useEffect(() => {
-        fetchMovies();
-    },[] );
+  useEffect(() => {
+    fetchMovies();
+  }, []);
 
-    return 
-    <Movies movies={movies} label="Top Movies"/>
-}
+  return (
+    <Movies
+      movies={movies}
+      label="Top Movies"
+    />
+  );
+};
 
 export default MovieList;

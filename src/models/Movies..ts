@@ -1,20 +1,21 @@
-import { Schema, model, models } from 'mongoose';
+import { Schema, model, models } from "mongoose";
 
+const movieSchema = new Schema(
+  {
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    videoUrl: { type: String, required: true },
+    thumbnailUrl: { type: String, required: true },
+    genre: { type: String, required: true },
+    duration: { type: String, required: true },
+    rating: { type: Number, required: true },
+  },
 
-const movieSchema = new Schema({
-  title: { type: String, required: true },
-  description: { type: String, required: true },
-  videoUrl: { type: String, required: true },
-  thumbnailUrl: { type: String, required: true },
-  genre: { type: String, required: true },
-  duration: { type: String, required: true },
-  rating: { type: Number, required: true },
-},
+  {
+    timestamps: true,
+  },
+);
 
-{
-  timestamps: true,
-});
-
-const Movie = models?.Movie || model('Movie', movieSchema);
+const Movie = models?.Movie || model("Movie", movieSchema);
 
 export default Movie;

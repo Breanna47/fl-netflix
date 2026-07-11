@@ -1,4 +1,4 @@
-  import mongoose from "mongoose";
+import mongoose from "mongoose";
 const MONGO_URI = process.env.MONGODB_URI!;
 
 let cached = global.mongoose;
@@ -14,21 +14,21 @@ async function connectToDB() {
 
   if (!cached.promise) {
     cached.promise = mongoose
-    .connect(MONGO_URI, {
-        bufferCommands: true, 
+      .connect(MONGO_URI, {
+        bufferCommands: true,
         maxPoolSize: 10,
-    })
-    .then(() => mongoose.connection);
-}
+      })
+      .then(() => mongoose.connection);
+  }
 
-    try {
-        cached.conn = await cached.promise
-    } catch (error) {
-        cached.promise = null;
-        throw error;
-    }
+  try {
+    cached.conn = await cached.promise;
+  } catch (error) {
+    cached.promise = null;
+    throw error;
+  }
 
-    return cached.conn;
+  return cached.conn;
 }
 
 export { connectToDB };

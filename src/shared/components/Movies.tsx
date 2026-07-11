@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { IMovie } from "@/types/movie.types";
 import { useState } from "react";
 import MoviePopup from "./MoviePopup";
@@ -33,9 +33,7 @@ const Movies = ({ movies, label }: MoviesProps) => {
     <>
       <div className="flex flex-col gap-2 relative my-[3vw] px-[4%]">
         {movies.length > 0 && (
-          <h2 className="text-[#e5e5e5] font-medium text-xl">
-            {label}
-          </h2>
+          <h2 className="text-[#e5e5e5] font-medium text-xl">{label}</h2>
         )}
 
         <div className="flex gap-2 overflow-x-auto">
@@ -50,10 +48,12 @@ const Movies = ({ movies, label }: MoviesProps) => {
                 className="relative w-[250px] h-[140px]
                 rounded-sm overflow-hidden transition duration-300 ease-in-out"
               >
-                <img
+                <Image
                   src={movie.thumbnailUrl}
                   alt={movie.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="250px"
+                  className="object-cover"
                 />
               </div>
 

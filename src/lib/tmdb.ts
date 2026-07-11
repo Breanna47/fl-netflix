@@ -1,22 +1,39 @@
 import { IMovie } from "@/types/movie.types";
 
-export function mapTMDBMovie(movie: any): IMovie {
+interface TMDBMovie {
+  id: number;
+  title: string;
+  overview: string;
+  backdrop_path: string | null;
+  poster_path: string | null;
+  vote_average: number;
+}
+
+export function mapTMDBMovie(movie: TMDBMovie): IMovie {
   return {
     id: movie.id,
     _id: `tmdb-${movie.id}`,
 
     title: movie.title,
-    description: movie.overview ?? "No description available.",
+
+    description: movie.overview || "No description available.",
 
     thumbnailUrl: movie.backdrop_path
-      ? `https://image.tmdb.org/t/p/w780${movie.backdrop_path}`
-      : `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      ? `https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`
+      : movie.poster_path
+        ? `https://image.tmdb.org/t/p/w780${movie.poster_path}`
+        : "/assets/no-image.jpg",
 
     videoUrl: "",
 
-    genre: "Movie",
-    duration: "N/A",
-    rating: movie.vote_average,
+    trailerKey: undefined,
+
+    genre: "",
+
+    duration: "Unknown",
+
+    rating: Number(movie.vote_average.toFixed(1)),
+
     mood: "",
   };
 }

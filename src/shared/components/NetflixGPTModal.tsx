@@ -1,231 +1,240 @@
 "use client";
-import { useState, useEffect } from "react";
-import { Film } from "lucide-react";
+
+import { useState } from "react";
 import axios from "axios";
-import { Dialog, 
-    DialogContent, 
-    DialogDescription, 
-    DialogHeader, DialogTitle,
-DialogFooter } from "../ui/components/Dialog";
+import { Film } from "lucide-react";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/components/Dialog";
+
 import { Slider } from "../ui/components/Slider";
-import { GENRES, MOODS } from "@/constants";
 import { Badge } from "../ui/components/Badge";
-import { GoogleGenAI } from "@google/genai"
+
+import { GENRES, MOODS } from "@/constants";
+
 import RecommendedMovieModal from "./RecommendedMovieModal";
-import { IMovie, IRecommendedMovie } from "@/types/movie.types";
 
-
+import { IRecommendedMovie } from "@/types/movie.types";
 
 interface INetflixGPTModalProps {
-    isNetflixGPTModalOpen: boolean;
-    setIsNetflixGPTModalOpen: (isOpen: boolean) => void;
+  isNetflixGPTModalOpen: boolean;
+  setIsNetflixGPTModalOpen: (isOpen: boolean) => void;
 }
 
 const NetflixGPTModal = ({
-    isNetflixGPTModalOpen, 
-    setIsNetflixGPTModalOpen
+  isNetflixGPTModalOpen,
+  setIsNetflixGPTModalOpen,
 }: INetflixGPTModalProps) => {
-const [duration, setDuration] = useState<number[]>([10]);
-const [rating, setRating] = useState<number[]>([6]);
-const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
-const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-const [movies, setMovies] = useState<IMovie[]>([]);
-const [recommendedMovie, setRecommendedMovie] = 
-useState<IRecommendedMovie | null>(null);
-const [isRecommendedMovieModalOpen, setIsRecommendedMovieModalOpen] = useState(false)
+  const [rating, setRating] = useState<number[]>([6]);
 
-const toggleMood = (mood: string) => {
-    setSelectedMoods((prev) =>
-        prev.includes(mood) ? prev.filter((m) => m !== mood) : [...prev, mood]
-    );
-};
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 
-const toggleGenre = (genre: string) => {
+  const [selectedMoods, setSelectedMoods] = useState<string[]>([]);
+
+  const [recommendedMovie, setRecommendedMovie] =
+    useState<IRecommendedMovie | null>(null);
+
+  const [loading, setLoading] = useState(false);
+
+  const [isRecommendedMovieModalOpen, setIsRecommendedMovieModalOpen] =
+    useState(false);
+
+  const toggleGenre = (genre: string) => {
     setSelectedGenres((prev) =>
-        prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre],
     );
-};
+  };
 
-const handleRecommendMovie = async () => {
-    setIsRecommendedMovieModalOpen(true);
-    return;
+  const toggleMood = (mood: string) => {
+    setSelectedMoods((prev) =>
+      prev.includes(mood) ? prev.filter((m) => m !== mood) : [...prev, mood],
+    );
+  };
+
+  const handleRecommendMovie = async () => {
     try {
-        const ai = new GoogleGenAI({
-            apiKey: process.env.NEXT_PUBLIC_GEMINI_API_KEY,
-        });
+      setLoading(true);
 
-        const model = "gemini-2.5-flash-lite";
+      const { data } = await axios.post("/api/recommendations", {
+        genres: selectedGenres,
+        moods: selectedMoods,
+        rating: rating[0],
+      });
 
-        const preferences = {
-            genre: selectedGenres,
-            minDuration: duration[0],
-            minRating: rating[0],
-            mood: selectedMoods,
-        };
+      console.log("Recommendations:", data);
 
-        const contents = [
-            {
-                role: "user",
-                parts: [
-                    {
-                        text: `You are a movie recommendation assistant. Here is a list of movies: ${JSON.stringify(
-                            movies,
-                            null,
-                            2
-                        )}
-User Preferences: ${JSON.stringify(preferences, null, 2)}
-Task:
-- Recommend the best movie(s) from the list.
-- Explain briefly why you chose it.
-- Return response in JSON with keys: "recommendation" and "reason"
-`,
-                    },
-                ],
-            },
-        ];
-
-        const response = await ai.models.generateContent({
-            model,
-            contents,
-        });
-
-        const text =
-            response?.candidates?.[0]?.content?.parts
-                ?.map((part) => part.text)
-                .join("\n") || "No response";
-
-                const cleanedText = text.replace(/```json\s*|\s*```/g, "")
-                const output =JSON.parse(cleanedText);
-
-setRecommendedMovie (output);
-setIsRecommendedMovieModalOpen(true);
-            } catch (error) {
-        console.log(error);
-    }
-};
-
-const fetchMovies = async () => {
-    try {
-        const { data } = await axios.get("/api/movies");
-        setMovies(data);
+      setRecommendedMovie(data);
+      setIsRecommendedMovieModalOpen(true);
     } catch (error) {
-        console.log(error);
+      console.error("Recommendation Error:", error);
+
+      alert("Unable to generate recommendations. Please try again.");
+    } finally {
+      setLoading(false);
     }
-};
+  };
 
-useEffect(() => {
-    fetchMovies();
-}, []);
-
-    return (
-
-     <>
-    <Dialog 
-    open={isNetflixGPTModalOpen} 
-    onOpenChange={() => setIsNetflixGPTModalOpen(false)}
-    >
-      <DialogContent className="bg-[#1a1a1a] max-w-2xl! w-full gap-10
-      overflow-y-auto text-white border -[#333333]">
-        <DialogHeader>
-
-            <DialogTitle className="mb-2 flex gap-2 flex gap-2 items-center text-2xl font-bold">
-                <Film className="w-6 h-6 text-[#ff0000]" />
-                Find Your Perfect Movie
+  return (
+    <>
+      <Dialog
+        open={isNetflixGPTModalOpen}
+        onOpenChange={() => setIsNetflixGPTModalOpen(false)}
+      >
+        <DialogContent
+          className="
+            bg-[#181818]
+            border-none
+            max-w-2xl
+            text-white
+            gap-8
+          "
+        >
+          <DialogHeader>
+            <DialogTitle
+              className="
+                flex
+                items-center
+                gap-2
+                text-2xl
+                font-bold
+              "
+            >
+              <Film className="text-[#E50914]" />
+              Find Your Perfect Movie
             </DialogTitle>
-            <DialogDescription className="text-color-[#999999]">
-                Adjust your prefences to get the best recommendations.
+
+            <DialogDescription className="text-gray-400">
+              Select your favorite genres and moods to discover movies
+              you&apos;ll love.
             </DialogDescription>
-        </DialogHeader>         
-            <div className="flex flex-col gap-5">
-                <div className="flex gap-4 flex-col">
-                    <div className="flex justify-between items-center">
-                        <label className="text-sm font-semibold text-[#f2f2f2]">Duration Range</label>
-                        <span className="text-sm text-[#999]">{duration[0]} mins</span>
-                    </div>
-                    <Slider max={15} step={0.5} minStepsBetweenThumbs={1} value={duration} onValueChange={setDuration}/>
-                </div>
-                <div className="flex gap-4 flex-col">
-                    <div className="flex gap-4 flex-col">
-                    <div className="flex justify-between items-center">
-                        <label className="text-sm font-semibold text-[#f2f2f2]">Minimum Rating</label>
-                        <span className="text-sm text-[#999]">{rating[0]}/15 mins</span>
-                    </div>
-                    <Slider max={15} step={0.5} minStepsBetweenThumbs={1} value={rating} onValueChange={setRating}/>
-                </div>
-                <div className="flex flex-col gap-4 mt-3"></div>
-                <label className="text-sm font-semibold text-[#f2f2f2]">Select Mood</label>
-          
-            <div className="flex flex-wrap gap-2">
+          </DialogHeader>
 
-                   {MOODS.map((mood) => (
+          {/* Rating */}
+
+          <div className="flex flex-col gap-3">
+            <div className="flex justify-between">
+              <span className="font-medium">Minimum Rating</span>
+
+              <span className="text-gray-400">{rating[0].toFixed(1)}</span>
+            </div>
+
+            <Slider
+              value={rating}
+              min={1}
+              max={10}
+              step={0.5}
+              onValueChange={setRating}
+            />
+          </div>
+
+          {/* Mood */}
+
+          <div className="flex flex-col gap-3">
+            <label className="font-medium">Mood</label>
+
+            <div className="flex flex-wrap gap-2">
+              {MOODS.map((mood) => (
                 <Badge
-                key={mood}
-                 className="cursor-pointer chip-hover px-4 py-2 text-sm pt-2 pb-2"
-                 variant={selectedMoods.includes(mood) ? "default" : "outline"
+                  key={mood}
+                  onClick={() => toggleMood(mood)}
+                  className={`
+                    cursor-pointer
+                    border
+                    transition-all
+                    duration-200
 
-                 }
-                 onClick={() => toggleMood(mood)}
-                 >
-                    {mood}</Badge>
-            ))}
+                    ${
+                      selectedMoods.includes(mood)
+                        ? "bg-[#E50914] border-[#E50914] text-white shadow-lg scale-105"
+                        : "bg-transparent border-[#555] text-[#B3B3B3] hover:border-white hover:text-white"
+                    }
+                  `}
+                >
+                  {mood}
+                </Badge>
+              ))}
             </div>
-           
-            </div>
-            <div className="flex flex-col gap-4 mt-3">
-            <label className="text-sm font-semibold text-[#f2f2f2]">Select Genres</label>
+          </div>
+
+          {/* Genres */}
+
+          <div className="flex flex-col gap-3">
+            <label className="font-medium">Genres</label>
+
             <div className="flex flex-wrap gap-2">
-                {GENRES.map((genre) =>
-                <Badge key={genre} className="cursor-pointer chip-hover px-4 py-2 text-sm pt-2 pb-2"
-                onClick={() => toggleGenre(genre)}
-                variant={selectedGenres.includes(genre) ? "default" : "outline"
-                    
-                }
-                >
-                    {genre}
-                    </Badge>
-                )}
-            </div>
+              {GENRES.map((genre) => (
+                <Badge
+                  key={genre}
+                  onClick={() => toggleGenre(genre)}
+                  className={`
+                    cursor-pointer
+                    border
+                    transition-all
+                    duration-200
 
-            </div>
-            </div>
-
-            {recommendedMovie && (
-                <div className="mt-6 rounded-lg border border-[#333333] bg-[#0f0f0f] p-4">
-                    <h3 className="text-lg font-semibold text-white">Recommended Movie</h3>
-                    <p className="text-sm text-[#ccc]">{typeof recommendedMovie.recommendation === 'string' ? recommendedMovie.recommendation : JSON.stringify(recommendedMovie.recommendation)}</p>
-                        <p className="text-sm text-[#999]">Reason: {typeof recommendedMovie.reason === 'string' ? recommendedMovie.reason : JSON.stringify(recommendedMovie.reason)}</p>
-                </div>
-            )}
-
-            <DialogFooter className="flex gap-6 mt-6 ">
-                <button
-                    type="button"
-                    className="cursor-pointer bg-[#141414] font-medium text-sm py-2 px-4 border border-[#262626] rounded-md"
-                    onClick={() => setIsNetflixGPTModalOpen(false)}
+                    ${
+                      selectedGenres.includes(genre)
+                        ? "bg-[#E50914] border-[#E50914] text-white shadow-lg scale-105"
+                        : "bg-transparent border-[#555] text-[#B3B3B3] hover:border-white hover:text-white"
+                    }
+                  `}
                 >
-                    Cancel
-                </button>
-                <button
-                    type="button"
-                    className="cursor-pointer bg-[#440000] glow-red font-medium text-sm py-2 px-4 border-[#262626] rounded-[10px]"
-                    onClick={handleRecommendMovie}
-                >
-                    Generate Recommendations
-                </button>
-            </DialogFooter>
+                  {genre}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          <DialogFooter className="mt-6 flex justify-between">
+            <button
+              type="button"
+              onClick={() => setIsNetflixGPTModalOpen(false)}
+              className="
+                px-5
+                py-2
+                rounded-md
+                border
+                border-[#444]
+                hover:bg-[#2b2b2b]
+                transition
+              "
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              disabled={loading}
+              onClick={handleRecommendMovie}
+              className="
+                px-6
+                py-2
+                rounded-md
+                bg-[#E50914]
+                hover:bg-red-700
+                disabled:opacity-60
+                transition
+              "
+            >
+              {loading ? "Finding Movies..." : "Generate Recommendations"}
+            </button>
+          </DialogFooter>
         </DialogContent>
-    </Dialog>
+      </Dialog>
 
-    {isRecommendedMovieModalOpen ? (
-        <RecommendedMovieModal 
-         isRecommendedMovieModalOpen={isRecommendedMovieModalOpen}
-         setIsRecommendedMovieModalOpen={setIsRecommendedMovieModalOpen}
-         recommendedMovie={recommendedMovie}
-         movies={movies}
-        />
-     ) : null}
+      <RecommendedMovieModal
+        isRecommendedMovieModalOpen={isRecommendedMovieModalOpen}
+        setIsRecommendedMovieModalOpen={setIsRecommendedMovieModalOpen}
+        recommendedMovie={recommendedMovie}
+      />
     </>
-    );
+  );
 };
 
 export default NetflixGPTModal;

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { useState } from "react";
 import { Input } from "@/shared/ui/components/Input";
 import { FcGoogle } from "react-icons/fc";
@@ -9,68 +9,82 @@ import { useRouter } from "next/navigation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const router = useRouter();
+  const [password, setPassword] = useState("");
+  const router = useRouter();
 
-const handleLogin = async () => {
-  try {
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-    
-    if (result?.error) {
-      console.error("Login error:", result.error);
-      alert(result.error);
-      return;
+  const handleLogin = async () => {
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        console.error("Login error:", result.error);
+        alert(result.error);
+        return;
+      }
+
+      router.push("/profiles");
+    } catch (error) {
+      console.error("Sign in error:", error);
     }
-    
-    router.push("/profiles");
-  } catch (error) {
-    console.error("Sign in error:", error);
-  }
-};
-
-  return(
- <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center bg-black
-    loginContainer">
-        <div className="max-w-[480px] w-full bg-[#000000b3] rounded-sm py-12 px-16 font-bold text-[2rem]
-        text-white flex flex-col gap-5 z-50">
-        <h1>Login</h1>
-      
-        <Input type="email" 
-        placeholder="Email" 
-        className="py-6 px-2" 
-        value={email} 
-        onChange={(e) => setEmail(e.target.value)} 
-        />
-        <Input type="password" 
-        placeholder="Password" 
-        className="py-6 px-2" 
-        value={password}
-        onChange={(e) => setPassword(e.target.value)} 
-        />
-        <button className="cursor-pointer w-full bg-[#e50914] text-base font-medium rounded-lg py-2.5"
-        onClick={handleLogin}
-        >
-            Login</button>
-        <p className="text-base text-[#ffffffb3] text-center">OR</p>
-        <div className="flex items-center justify-center gap-4">
-            <FcGoogle className="cursor-pointer w-10 h-10" 
-            onClick={() => signIn("google", { callbackUrl: "/profiles" })}/>
-            <BsGithub className="cursor-pointer w-10 h-10" 
-            onClick={() => signIn("github", { callbackUrl: "/profiles" })}/>
-        </div><div>
-            <span className="text-[#ffffffb3] text-base font-normal">
-                New to Netflix?</span>
-                <Link href="/signup" className="font-medium text-base">
-                    Sign Up
-                </Link>
-        </div>              
-          </div>
-        </div>
-    );
   };
 
-  export default Login;
+  return (
+    <div
+      className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center bg-black
+    loginContainer"
+    >
+      <div
+        className="max-w-[480px] w-full bg-[#000000b3] rounded-sm py-12 px-16 font-bold text-[2rem]
+        text-white flex flex-col gap-5 z-50"
+      >
+        <h1>Login</h1>
+
+        <Input
+          type="email"
+          placeholder="Email"
+          className="py-6 px-2"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <Input
+          type="password"
+          placeholder="Password"
+          className="py-6 px-2"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          className="cursor-pointer w-full bg-[#e50914] text-base font-medium rounded-lg py-2.5"
+          onClick={handleLogin}
+        >
+          Login
+        </button>
+        <p className="text-base text-[#ffffffb3] text-center">OR</p>
+        <div className="flex items-center justify-center gap-4">
+          <FcGoogle
+            className="cursor-pointer w-10 h-10"
+            onClick={() => signIn("google", { callbackUrl: "/profiles" })}
+          />
+          <BsGithub
+            className="cursor-pointer w-10 h-10"
+            onClick={() => signIn("github", { callbackUrl: "/profiles" })}
+          />
+        </div>
+        <div>
+          <span className="text-[#ffffffb3] text-base font-normal">
+            New to Netflix?
+          </span>
+          <Link href="/signup" className="font-medium text-base">
+            Sign Up
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Login;

@@ -1,140 +1,186 @@
-import { useRef } from "react";
-import { Dialog, DialogContent } from "../ui/components/Dialog"
-import { IMovie } from "@/types/movie.types";
+"use client";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Dot } from "lucide-react";
-import { DialogTitle } from "../ui/components/Dialog";
-import useUser from "@/stores/user.store";
 import axios from "axios";
+import { getTrailer } from "@/lib/getTrailer";
+import { Dialog, DialogContent, DialogTitle } from "../ui/components/Dialog";
 
+import { IMovie } from "@/types/movie.types";
+import useUser from "@/stores/user.store";
 
 interface IMovieInfoModalProps {
-    showInfoModal: boolean;
-    setShowInfoModal: (value: boolean) => void;
-    movieData: IMovie | null;
-    
+  showInfoModal: boolean;
+  setShowInfoModal: (value: boolean) => void;
+  movieData: IMovie | null;
 }
-
-const MovieInfoModal = ({ 
-    showInfoModal, 
-    setShowInfoModal, 
-    movieData 
+const MovieInfoModal = ({
+  showInfoModal,
+  setShowInfoModal,
+  movieData,
 }: IMovieInfoModalProps) => {
-    const videoRef = useRef<HTMLVideoElement | null>(null);
-    const {updateUser, updateFavorites, user} = useUser();
+  const { user, updateUser, updateFavorites } = useUser();
+  const [trailerKey, setTrailerKey] = useState<string | null>(null);
 
-   const isFavorite =
-  user?.favorites.includes(movieData?._id ?? "") ?? false;
+  useEffect(() => {
+    if (!movieData) return;
 
-    const handlePlayButtonClick = () => {
-        if (videoRef.current) {
-            videoRef.current.requestFullscreen ();
-        }
-    };
+    async function loadTrailer() {
+      const key = await getTrailer(movieData!.id);
+      console.log("Trailer key:", key);
 
-const toggleFavorite = async () => {
-  try {
-    if (isFavorite) {
-      await axios.delete("/api/favorite", {
-        data: {
-          movieId: movieData?._id,
-        },
-      });
-    } else {
-      await axios.post("/api/favorite", {
-        movieId: movieData?._id,
-      });
+      setTrailerKey(key);
     }
 
-    await updateUser();
-    await updateFavorites();
+    loadTrailer();
+  }, [movieData]);
 
-  } catch (error) {
-    console.error(error);
-  }
-};
+  const isFavorite = user?.favorites.includes(movieData?._id ?? "") ?? false;
 
-  return (  
-  <Dialog open={showInfoModal} onOpenChange={() =>setShowInfoModal(false)}>
-    <DialogTitle></DialogTitle>
-    <DialogContent className="bg-[#181818] border-none min-w-[700px] 
-    popupShadow p-0">
-        <div className="flex flex-col gap-4 w-full"> 
-<div className="relative w-full h-[350px]">              {movieData?.videoUrl ? (
-  <video
-    ref={videoRef}
-    src={movieData.videoUrl}
-    poster={movieData.thumbnailUrl}
-    className="w-full h-[350px] object-cover"
-    autoPlay
-    loop
-    muted
-    playsInline
-  />
-) : (
-  <Image
-    src={movieData?.thumbnailUrl ?? ""}
-    alt={movieData?.title ?? ""}
-    fill
-    className="object-cover"
-  />
-)}
-                <div 
-                className="absolute bottom-4 left-7 flex 
-                flex-col gap-5 items-center"
+  const toggleFavorite = async () => {
+    if (!movieData) return;
+
+    try {
+      if (isFavorite) {
+        await axios.delete("/api/favorite", {
+          data: {
+            movieId: movieData._id,
+          },
+        });
+      } else {
+        await axios.post("/api/favorite", {
+          movieId: movieData._id,
+        });
+      }
+
+      await updateUser();
+      await updateFavorites();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleFullscreen = () => {
+    const iframe = document.getElementById(
+      "movie-trailer",
+    ) as HTMLIFrameElement | null;
+
+    if (iframe?.requestFullscreen) {
+      iframe.requestFullscreen();
+    }
+  };
+
+  return (
+    <Dialog open={showInfoModal} onOpenChange={() => setShowInfoModal(false)}>
+      <DialogTitle />
+
+      <DialogContent className="bg-[#181818] border-none min-w-[700px] popupShadow p-0 overflow-hidden">
+        <div className="flex flex-col w-full">
+          {/* Trailer */}
+          <div className="relative w-full h-[350px] bg-black">
+            {trailerKey ? (
+              <iframe
+                id="movie-trailer"
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=0&controls=1&playsinline=1`}
+                title={movieData?.title ?? "Movie Trailer"}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+              />
+            ) : (
+              <Image
+                src={movieData?.thumbnailUrl ?? ""}
+                alt={movieData?.title ?? ""}
+                fill
+                className="object-cover"
+              />
+            )}
+
+            <div className="absolute bottom-6 left-8 flex flex-col gap-5">
+              <h1 className="text-4xl font-bold text-white">
+                {movieData?.title}
+              </h1>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={handleFullscreen}
+                  className="flex items-center gap-2 bg-white text-black font-bold px-4 py-2 rounded cursor-pointer hover:bg-gray-200 transition"
                 >
-                <h1 className="text-4xl text-white font-bold self-start">
-                    {movieData?.title}
-                    </h1>
-                    <div className="flex self-start gap-3">
-                     <button className="flex gap-2 bg-white 
-                     p-2 px-3.5 rounded-sm self-start cursor-pointer font-bold"
-                        onClick={handlePlayButtonClick}>
-                        <Image src="/assets/play.svg" 
-                        width={20}
-                        height={20}
-                        alt="Play"
-                        />
-                        Play
-                        </button>   
-                         <button className="bg-transparent border-2 rounded-full p-2 border-white cursor-pointer"
-                         onClick={toggleFavorite}
-                         >
-                     <Image
-  src={`/assets/${isFavorite ? "white-tick" : "plus"}.svg`}
-  width={20}
-  height={20}
-  alt="Add"
-/>
-                    
-                        </button>   
-                          </div>
-                </div>
-                </div>  
-                <div className="flex flex-col gap-6 p-10">
-                    <div className="flex gap-2 items-center">
-                        <span className="px-2 uppercase whitespace-nowrap text-[#bcbcbc]
-                        text-sm font-medium border border-[#fff6]"
-                        >
-                            U/A 13+
-                        </span>
-                        <span className="text-[#bcbcbc] text-base">{movieData?.duration}</span>
-                        <span className="text-[#bcbcbc] border border-[#fff6] rounded-[3px]
-                        text-xs px-1.5"
-                        >
-                            HD</span>
-                    </div>
-                 <p className="text-base leading-[26px] text-white">{movieData?.description}</p>
-                <div className="flex">
-                    <p className="textShadow text-base text-white">{movieData?.genre}</p>
-                    <Dot className="text-[#646464]"/>
-                    <p className="textShadow text-base text-white">{movieData?.mood}</p>
-                </div>
+                  <Image
+                    src="/assets/play.svg"
+                    width={20}
+                    height={20}
+                    alt="Play"
+                  />
+                  Play
+                </button>
 
-                </div>
-                   </div>
-    </DialogContent>
-  </Dialog>  
+                <button
+                  onClick={toggleFavorite}
+                  className="border-2 border-white rounded-full p-2 hover:bg-white/10 transition"
+                >
+                  <Image
+                    src={`/assets/${isFavorite ? "white-tick" : "plus"}.svg`}
+                    width={20}
+                    height={20}
+                    alt="Favorite"
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Movie Details */}
+          <div className="flex flex-col gap-6 p-10">
+            <div className="flex gap-2 items-center">
+              <span
+                className="
+                  px-2
+                  uppercase
+                  whitespace-nowrap
+                  text-[#bcbcbc]
+                  text-sm
+                  font-medium
+                  border
+                  border-[#fff6]
+                "
+              >
+                U/A 13+
+              </span>
+
+              <span className="text-[#bcbcbc]">{movieData?.duration}</span>
+
+              <span
+                className="
+                  text-[#bcbcbc]
+                  border
+                  border-[#fff6]
+                  rounded
+                  px-2
+                  text-xs
+                "
+              >
+                HD
+              </span>
+
+              <span className="text-green-400 font-semibold ml-2">
+                ⭐ {movieData?.rating.toFixed(1)}
+              </span>
+            </div>
+
+            <p className="text-white leading-7">{movieData?.description}</p>
+
+            <div className="flex items-center">
+              <p className="text-white">{movieData?.genre}</p>
+
+              <Dot className="text-gray-500" />
+
+              <p className="text-white">{movieData?.mood}</p>
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
 

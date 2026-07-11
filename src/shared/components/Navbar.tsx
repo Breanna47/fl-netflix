@@ -1,133 +1,143 @@
 "use client";
 import { Sparkle } from "lucide-react";
 import Image from "next/image";
-import { DropdownMenu, 
-    DropdownMenuContent, 
-    DropdownMenuGroup, 
-    DropdownMenuItem, 
-    DropdownMenuSeparator, 
-    DropdownMenuTrigger,
- } from "@/shared/ui/components/DropdownMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/shared/ui/components/DropdownMenu";
 import { signOut, useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import NetflixGPTModal from "./NetflixGPTModal";
 
 const Navbar = () => {
+  const { data: session } = useSession();
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isNetflixGPTModalOpen, setIsNetflixGPTModalOpen] = useState(false);
 
-const {data: session} = useSession();
-const  [isScrolled, setIsScrolled] = useState(false);
-const [isNetflixGPTModalOpen, setIsNetflixGPTModalOpen] = useState(false);
-
-
-useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
-        setIsScrolled(window.scrollY > 0);
+      setIsScrolled(window.scrollY > 0);
     };
 
     window.addEventListener("scroll", handleScroll);
 
     return () => {
-        window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
-}, []);
+  }, []);
 
-    return (
-        <>
-        <div>
+  return (
+    <>
+      <div></div>
+      {isNetflixGPTModalOpen ? (
+        <NetflixGPTModal
+          isNetflixGPTModalOpen={isNetflixGPTModalOpen}
+          setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen}
+        />
+      ) : null}
+      <div
+        className={cn(
+          `fixed top-0 w-full flex justify-between px-12 py-4
+        bg-transparent transition-colors duration-1000 z-50`,
+          isScrolled ? "bg-black" : "",
+        )}
+      >
+        <div className="flex gap-8 items-center">
+          <h1 className="text-[#e50914] cursor-pointer text-[25px] font-bold">
+            Netflix
+          </h1>
+          <ul className="flex gap-5 text-sm">
+            <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
+              Home
+            </li>
+            <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
+              Shows
+            </li>
+            <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
+              Movies
+            </li>
+            <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
+              Games
+            </li>
+          </ul>
         </div>
-        {isNetflixGPTModalOpen ? (
-            <NetflixGPTModal 
-            isNetflixGPTModalOpen={isNetflixGPTModalOpen}
-            setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen}
-            />
-        ) : null}
-        <div className={cn(
-        `fixed top-0 w-full flex justify-between px-12 py-4
-        bg-transparent transition-colors duration-1000 z-50`, isScrolled ? "bg-black" : ""
-    )}
+        <div
+          className="flex gap-[15px] items-center"
+          onClick={() => setIsNetflixGPTModalOpen(true)}
         >
-            <div className="flex gap-8 items-center">
-                <h1 className="text-[#e50914] cursor-pointer text-[25px] font-bold">Netflix</h1>
-                <ul className="flex gap-5 text-sm">
-                    <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
-                        Home
-                    </li>
-                    <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
-                        Shows
-                    </li>
-                    <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
-                        Movies
-                    </li>
-                    <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
-                        Games
-                    </li>
-                </ul>
-            </div>
-            <div className="flex gap-[15px] items-center" onClick={() => setIsNetflixGPTModalOpen(true)}>
-                <button className="cursor-pointer">
-                 <Sparkle className="text-white" size={20} />   
-                 </button>
-                <Image 
-                src="/assets/search.svg" 
-                className="cursor-pointer" 
-                width={24} 
-                height={24}
-                alt="Search"
-                 />   
-                 <Image 
-                 src="/assets/notification.svg" 
-                className="cursor-pointer" 
-                width={24} 
-                height={24}
-                alt="Notification"
-                 />
-                 <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                 <button className="text-white cursor-pointer">
-                    <Image 
-                    src="/assets/profile.png"
-                    height={32}
-                    width={32}
-                    alt="Profile"
-                    className="rounded-[4px]"
-                    />
-                </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                className="bg-[#000000e6] 
+          <button className="cursor-pointer">
+            <Sparkle className="text-white" size={20} />
+          </button>
+          <Image
+            src="/assets/search.svg"
+            className="cursor-pointer"
+            width={24}
+            height={24}
+            alt="Search"
+          />
+          <Image
+            src="/assets/notification.svg"
+            className="cursor-pointer"
+            width={24}
+            height={24}
+            alt="Notification"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="text-white cursor-pointer">
+                <Image
+                  src="/assets/profile.png"
+                  height={32}
+                  width={32}
+                  alt="Profile"
+                  className="rounded-[4px]"
+                />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="bg-[#000000e6] 
                 text-white 
-                border-none w-[200px]">   
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem>
-                              <Image 
+                border-none w-[200px]"
+            >
+              <DropdownMenuGroup>
+                <DropdownMenuItem>
+                  <Image
                     src="/assets/profile.png"
                     height={32}
                     width={32}
                     alt="Profile"
                     className="rounded-[4px]"
-                    />
-                    <span>{session?.user?.name}</span>
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                    <DropdownMenuSeparator className="bg-[#ffffff40]" />
-                    <DropdownMenuGroup>
-                        <DropdownMenuItem className="text-[13px] px-2.5 py-2 flex 
+                  />
+                  <span>{session?.user?.name}</span>
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator className="bg-[#ffffff40]" />
+              <DropdownMenuGroup>
+                <DropdownMenuItem
+                  className="text-[13px] px-2.5 py-2 flex 
                         justify-between"
-                        onClick={() => signOut()}
-                        >
-                            Sign Out of Netflix
-                        </DropdownMenuItem>
-                    </DropdownMenuGroup>
-                </DropdownMenuContent>
-                 </DropdownMenu>
-            </div>
+                  onClick={() => signOut()}
+                >
+                  Sign Out of Netflix
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        {isNetflixGPTModalOpen ? 
-        <NetflixGPTModal isNetflixGPTModalOpen={isNetflixGPTModalOpen} 
-        setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen} /> : null}
-        </>
-    );
+      </div>
+      {isNetflixGPTModalOpen ? (
+        <NetflixGPTModal
+          isNetflixGPTModalOpen={isNetflixGPTModalOpen}
+          setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen}
+        />
+      ) : null}
+    </>
+  );
 };
 
 export default Navbar;

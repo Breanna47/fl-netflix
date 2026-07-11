@@ -7,12 +7,8 @@ import MovieInfoModal from "./MovieInfoModal";
 
 interface BillboardProps {
   randomMovie: IMovie | null;
-  video: {
-    key: string;
-  } | null;
 }
-
-const Billboard = ({ randomMovie, video }: BillboardProps) => {
+const Billboard = ({ randomMovie }: BillboardProps) => {
   const [showInfoModal, setShowInfoModal] = useState(false);
 
   if (!randomMovie) return null;
@@ -20,8 +16,6 @@ const Billboard = ({ randomMovie, video }: BillboardProps) => {
   return (
     <>
       <div className="relative h-screen w-full overflow-hidden">
-
-        {/* Background Image */}
         <Image
           src={randomMovie.thumbnailUrl}
           alt={randomMovie.title}
@@ -59,7 +53,6 @@ const Billboard = ({ randomMovie, video }: BillboardProps) => {
           </p>
 
           <div className="flex gap-4">
-
             <button
               onClick={() => setShowInfoModal(true)}
               className="
@@ -74,12 +67,7 @@ const Billboard = ({ randomMovie, video }: BillboardProps) => {
                 transition
               "
             >
-              <Image
-                src="/assets/play.svg"
-                alt="Play"
-                width={24}
-                height={24}
-              />
+              <Image src="/assets/play.svg" alt="Play" width={24} height={24} />
               Play
             </button>
 
@@ -105,7 +93,6 @@ const Billboard = ({ randomMovie, video }: BillboardProps) => {
               />
               More Info
             </button>
-
           </div>
         </div>
       </div>
@@ -114,11 +101,6 @@ const Billboard = ({ randomMovie, video }: BillboardProps) => {
         showInfoModal={showInfoModal}
         setShowInfoModal={setShowInfoModal}
         movieData={randomMovie}
-        movieVideoURL={
-          video
-            ? `https://www.youtube.com/embed/${video.key}`
-            : null
-        }
       />
     </>
   );

@@ -1,4 +1,5 @@
 "use client";
+
 import { Sparkle } from "lucide-react";
 import Image from "next/image";
 import {
@@ -33,17 +34,17 @@ const Navbar = () => {
 
   return (
     <>
-      <div></div>
       {isNetflixGPTModalOpen ? (
         <NetflixGPTModal
           isNetflixGPTModalOpen={isNetflixGPTModalOpen}
           setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen}
         />
       ) : null}
+
       <div
         className={cn(
           `fixed top-0 w-full flex justify-between px-12 py-4
-        bg-transparent transition-colors duration-1000 z-50`,
+          bg-transparent transition-colors duration-1000 z-50`,
           isScrolled ? "bg-black" : "",
         )}
       >
@@ -51,6 +52,7 @@ const Navbar = () => {
           <h1 className="text-[#e50914] cursor-pointer text-[25px] font-bold">
             Netflix
           </h1>
+
           <ul className="flex gap-5 text-sm">
             <li className="text-white cursor-pointer hover:text-[#b3b3b3] transition-colors">
               Home
@@ -66,14 +68,15 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-       <div className="flex gap-[15px] items-center">
-         
-          <button className="cursor-pointer"
-              onClick={() => setIsNetflixGPTModalOpen(true)}
->
 
+        <div className="flex gap-[15px] items-center">
+          <button
+            className="cursor-pointer"
+            onClick={() => setIsNetflixGPTModalOpen(true)}
+          >
             <Sparkle className="text-white" size={20} />
           </button>
+
           <Image
             src="/assets/search.svg"
             className="cursor-pointer"
@@ -81,6 +84,7 @@ const Navbar = () => {
             height={24}
             alt="Search"
           />
+
           <Image
             src="/assets/notification.svg"
             className="cursor-pointer"
@@ -88,6 +92,7 @@ const Navbar = () => {
             height={24}
             alt="Notification"
           />
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="text-white cursor-pointer">
@@ -100,10 +105,9 @@ const Navbar = () => {
                 />
               </button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent
-              className="bg-[#000000e6] 
-                text-white 
-                border-none w-[200px]"
+              className="bg-[#000000e6] text-white border-none w-[200px]"
             >
               <DropdownMenuGroup>
                 <DropdownMenuItem>
@@ -117,12 +121,13 @@ const Navbar = () => {
                   <span>{session?.user?.name}</span>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
+
               <DropdownMenuSeparator className="bg-[#ffffff40]" />
+
               <DropdownMenuGroup>
                 <DropdownMenuItem
-                  className="text-[13px] px-2.5 py-2 flex 
-                        justify-between"
-                 onClick={() => signOut({ callbackUrl: "/login" })}
+                  className="text-[13px] px-2.5 py-2 flex justify-between"
+                  onClick={() => signOut({ redirectTo: "/login" })}
                 >
                   Sign Out of Netflix
                 </DropdownMenuItem>
@@ -131,12 +136,6 @@ const Navbar = () => {
           </DropdownMenu>
         </div>
       </div>
-      {isNetflixGPTModalOpen ? (
-        <NetflixGPTModal
-          isNetflixGPTModalOpen={isNetflixGPTModalOpen}
-          setIsNetflixGPTModalOpen={setIsNetflixGPTModalOpen}
-        />
-      ) : null}
     </>
   );
 };

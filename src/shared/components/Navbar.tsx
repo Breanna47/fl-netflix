@@ -121,7 +121,7 @@ const Navbar = () => {
                 <DropdownMenuItem
                   className="text-[13px] px-2.5 py-2 flex 
                         justify-between"
-                  onClick={() => signOut()}
+                 onClick={() => signOut({ callbackUrl: "/login" })}
                 >
                   Sign Out of Netflix
                 </DropdownMenuItem>

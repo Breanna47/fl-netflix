@@ -1,4 +1,5 @@
 "use client";
+
 import { Input } from "@/shared/ui/components/Input";
 import axios from "axios";
 import Link from "next/link";
@@ -13,61 +14,70 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const router = useRouter();
-
-  const handleLogin = async () => {
-    try {
-      const response = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl: "/",
-      });
-
-      if (!response?.ok) {
-        toast.error(response?.error);
-        return;
-      }
-
-      router.push("/");
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const handleSignUp = async () => {
     if (!name || !email || !password) {
       toast.error("All fields are required");
       return;
     }
+
     try {
-      await axios.post("/api", { name, email, password });
+      // Create the user in MongoDB
+      await axios.post("/api", {
+        name,
+        email,
+        password,
+      });
 
-      handleLogin();
+      // Sign the newly created user in
+      const response = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
+      if (response?.error) {
+        toast.error("Account created, but login failed");
+        console.error("Login error:", response.error);
+        return;
+      }
+
+      // Go to profile selection after login succeeds
       router.push("/profiles");
+      router.refresh();
     } catch (error) {
-      console.log(error);
+      if (axios.isAxiosError(error)) {
+        toast.error(
+          error.response?.data?.message || "Unable to create account",
+        );
+      } else {
+        toast.error("Unable to create account");
+      }
+
+      console.error("Sign up error:", error);
     }
   };
+
   return (
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center bg-black
-    loginContainer"
+      loginContainer"
     >
       <div
         className="max-w-[480px] w-full bg-[#000000b3] rounded-sm py-12 px-16 font-bold text-[2rem]
         text-white flex flex-col gap-5 z-50"
       >
         <h1>Sign Up</h1>
+
         <Input
-          type="name"
+          type="text"
           placeholder="Username"
           className="py-6 px-2"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
+
         <Input
           type="email"
           placeholder="Email"
@@ -75,6 +85,7 @@ const SignUp = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+
         <Input
           type="password"
           placeholder="Password"
@@ -82,27 +93,41 @@ const SignUp = () => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
+
         <button
           className="cursor-pointer w-full bg-[#e50914] text-base font-medium rounded-lg py-2.5"
           onClick={handleSignUp}
         >
           Sign up
         </button>
+
         <p className="text-base text-[#ffffffb3] text-center">OR</p>
+
         <div className="flex items-center justify-center gap-4">
           <FcGoogle
             className="cursor-pointer w-10 h-10"
-            onClick={() => signIn("google", { callbackUrl: "/profiles" })}
+            onClick={() =>
+              signIn("google", {
+                redirectTo: "/profiles",
+              })
+            }
           />
+
           <BsGithub
             className="cursor-pointer w-10 h-10"
-            onClick={() => signIn("github", { callbackUrl: "/profiles" })}
+            onClick={() =>
+              signIn("github", {
+                redirectTo: "/profiles",
+              })
+            }
           />
         </div>
+
         <div>
           <span className="text-[#ffffffb3] text-base font-normal">
-            Already have an account?
+            Already have an account?{" "}
           </span>
+
           <Link href="/login" className="font-medium text-base">
             Login
           </Link>

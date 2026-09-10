@@ -1,21 +1,21 @@
-import { getToken } from "next-auth/jwt";
-import { NextRequest, NextResponse } from "next/server";
+import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({
-    req,
-    secret: process.env.AUTH_SECRET,
-  });
+export default auth((req) => {
   const pathname = req.nextUrl.pathname;
+  const isLoggedIn = !!req.auth;
 
-  if (!token && pathname !== "/signup" && pathname !== "/login") {
+  if (!isLoggedIn && pathname !== "/signup" && pathname !== "/login") {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  if (token && (pathname === "/login" || pathname === "/signup")) {
+  if (isLoggedIn && (pathname === "/login" || pathname === "/signup")) {
     return NextResponse.redirect(new URL("/profiles", req.url));
   }
-}
+
+  return NextResponse.next();
+});
+
 export const config = {
   matcher: ["/", "/profiles", "/login", "/signup"],
 };

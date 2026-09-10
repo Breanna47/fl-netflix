@@ -66,11 +66,12 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <div
-          className="flex gap-[15px] items-center"
-          onClick={() => setIsNetflixGPTModalOpen(true)}
-        >
-          <button className="cursor-pointer">
+       <div className="flex gap-[15px] items-center">
+         
+          <button className="cursor-pointer"
+              onClick={() => setIsNetflixGPTModalOpen(true)}
+>
+
             <Sparkle className="text-white" size={20} />
           </button>
           <Image
